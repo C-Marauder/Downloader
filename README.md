@@ -3,13 +3,13 @@ A Android Library for Download File Base On OkHttp
 ### Kotlin+Okhttp封装的文件下载开发模块，基于AndroidX版本
 ## 1.依赖
 
-`compile 'com.xqy.androidx.downloader:downloader:1.0.0'`
+`implementation 'com.xqy.androidx.downloader:downloader:1.0.0'`
 
 ## 2.使用
 
 ```
  val downloadUrl = "http://xunleib.zuida360.com/1809/复仇者联盟4[预告片].mp4"
-        Downloader.mInstance.download(downloadUrl,"复仇者联盟4",{
+ Downloader.mInstance.download(downloadUrl,"复仇者联盟4",{
                 url,progress->
             progressTextView.text = "$progress%"
             progressView.show()
