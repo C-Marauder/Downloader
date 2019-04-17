@@ -17,26 +17,35 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
        val urls = mutableListOf<String>(
             "http://vip.zuiku8.com/1811/永夜 电视剧《将夜》推广曲 - 谭维维.mp4")
-        val filenames = mutableListOf<String>("将夜")
-
-        Downloader.mInstance.multiDownload(urls,filenames,{
-            url,progress->
-                progressTextView.text = "$progress%"
-                progressView.show()
-                progressView.progress = progress
-
-
-
+        val filenames = mutableListOf<String>("复仇者联盟")
+        val downloadUrl = "http://xunleib.zuida360.com/1809/复仇者联盟4[预告片].mp4"
+        Downloader.mInstance.download(downloadUrl,"复仇者联盟4",{
+                url,progress->
+            progressTextView.text = "$progress%"
+            progressView.show()
+            progressView.progress = progress
         },{
-            Log.e("===",it)
+            url,file->
+            progressTextView.text = "下载完成,存储目录：${file.absolutePath}"
         })
+//        Downloader.mInstance.multiDownload(urls,filenames,{
+//            url,progress->
+//                progressTextView.text = "$progress%"
+//                progressView.show()
+//                progressView.progress = progress
+//
+//
+//
+//        },{
+//            Log.e("===",it)
+//        })
         pauseView.setOnClickListener {
-            Downloader.mInstance.pauseDownload(urls.first())
+            Downloader.mInstance.pauseDownload(downloadUrl)
 
         }
         resumeView.setOnClickListener {
 
-            Downloader.mInstance.resumeDownload(urls.first())
+            Downloader.mInstance.resumeDownload(downloadUrl)
         }
 
         Log.e("===","======>>>>>>")

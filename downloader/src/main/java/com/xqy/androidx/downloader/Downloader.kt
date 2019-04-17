@@ -52,6 +52,10 @@ class Downloader private constructor() {
             Log.e(TAG, task + "is not exit")
             return
         }
+        if (task.status != DownloadStatus.PAUSED){
+            Log.e(TAG, taskUrl + "is already downloading")
+            return
+        }
         task.status = DownloadStatus.RESUME
         realDownload(task)
     }
@@ -112,18 +116,8 @@ class Downloader private constructor() {
             return
         }
         taskUrls.forEachIndexed { index, taskUrl ->
-            val type: String = when {
-                taskUrl.validateMusicType() -> Environment.DIRECTORY_MUSIC
-                taskUrl.validateVideoType() -> Environment.DIRECTORY_MOVIES
-                taskUrl.validatePicType() -> Environment.DIRECTORY_PICTURES
-                else -> {
-                    Environment.DIRECTORY_DOWNLOADS
-                }
-            }
-            val dir = Environment.getExternalStoragePublicDirectory(type)
-            val mFile = File(dir.absolutePath, filenames[index] + taskUrl.getFileType())
             validateNeedCallback(taskUrl, onDownload, onComplete)
-            download(taskUrl, mFile, onDownload)
+            download(taskUrl, filenames[index], onDownload)
         }
 
 
@@ -139,12 +133,22 @@ class Downloader private constructor() {
 
     }
 
-    fun download(taskUrl: String, file: File, onDownload: OnDownload? = null, onComplete: OnComplete? = null) {
+    fun download(taskUrl: String, filename: String, onDownload: OnDownload? = null, onComplete: OnComplete? = null) {
         validateNeedCallback(taskUrl, onDownload, onComplete)
         val request = Request.Builder()
             .url(taskUrl)
             .build()
-        val task = Task(url = taskUrl, request = request,file = file)
+        val type: String = when {
+            taskUrl.validateMusicType() -> Environment.DIRECTORY_MUSIC
+            taskUrl.validateVideoType() -> Environment.DIRECTORY_MOVIES
+            taskUrl.validatePicType() -> Environment.DIRECTORY_PICTURES
+            else -> {
+                Environment.DIRECTORY_DOWNLOADS
+            }
+        }
+        val dir = Environment.getExternalStoragePublicDirectory(type)
+        val mFile = File(dir.absolutePath, filename + taskUrl.getFileType())
+        val task = Task(url = taskUrl, request = request, file = mFile)
         mDownloadTasks[taskUrl] = task
         realDownload(task)
 
@@ -173,7 +177,9 @@ class Downloader private constructor() {
                     }
                     mTask.contentSize = body.contentLength()
                     mTask.inputStream = body.byteStream()
-                    mTask.fileOutputStream = FileOutputStream(mTask.file)
+                    if (mTask.fileOutputStream == null){
+                        mTask.fileOutputStream = FileOutputStream(mTask.file)
+                    }
                     calculate(mTask)
                 } else {
                     Log.e(TAG, response.message())
@@ -198,7 +204,10 @@ class Downloader private constructor() {
                 }
                 val len = mTask.inputStream!!.read(bytes)
                 if (len == -1) {
-                    callback?.second?.invoke(mTask.url)
+                    mHandler.post {
+                        callback?.second?.invoke(mTask.url,mTask.file)
+                    }
+                    mDownloadTasks.remove(mTask.url)
                     break
                 }
                 mTask.fileOutputStream!!.write(bytes, 0, len)
@@ -211,7 +220,6 @@ class Downloader private constructor() {
         } catch (e: Exception) {
             Log.e(TAG, e.localizedMessage)
             mTask.inputStream!!.close()
-            mTask.fileOutputStream!!.close()
 
         }
 
