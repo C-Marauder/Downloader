@@ -6,7 +6,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
-
+    <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progressView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/progressTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/progressView"
+            app:layout_constraintStart_toStartOf="@id/progressView"
+            app:layout_constraintEnd_toEndOf="@id/progressView"
+            android:textColor="@android:color/black"/>
     <TextView
             android:id="@+id/pauseView"
             android:layout_width="0dp"
@@ -15,10 +31,10 @@
             android:textSize="24sp"
             android:gravity="center"
             android:background="?attr/selectableItemBackground"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/progressView"/>
     <TextView
             android:id="@+id/resumeView"
             android:layout_width="0dp"
@@ -30,6 +46,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pauseView"
-    android:layout_marginTop="24dp"/>
+            android:layout_marginTop="24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

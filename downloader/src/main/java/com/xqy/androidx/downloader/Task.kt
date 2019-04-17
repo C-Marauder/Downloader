@@ -1,9 +1,7 @@
 package com.xqy.androidx.downloader
-
+import okhttp3.Call
 import okhttp3.Request
-import okio.BufferedSource
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 
@@ -13,7 +11,8 @@ internal class Task(var url:String,
            var fileOutputStream: FileOutputStream?=null,
            var status:DownloadStatus=DownloadStatus.START,
            var errorMsg:String?=null,
-           val request: Request,
+           var call: Call?=null,
+                    val request:Request,
            val file:File,
            var contentSize:Long=0)
 
