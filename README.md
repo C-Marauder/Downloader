@@ -42,11 +42,8 @@ A Android Library for Download File Base On OkHttp
         val filenames = mutableListOf<String>("将夜","复仇者联盟4")
         Downloader.mInstance.multiDownload(urls,filenames,{
                 url,progress->
-            progressTextView.text = "$progress%"
-            progressView.show()
-            progressView.progress = progress
+            //根据url判断是哪个下载任务，并进行操作
         },{
             url,file->
-            progressTextView.text = "下载完成,存储目录：${file.absolutePath}"
         })
  ```
